@@ -20,27 +20,42 @@
             padding: 24px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            width: 320px;
+            width: 360px;
+            max-width: 95vw;
         }
         h1 {
             margin-top: 0;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             text-align: center;
         }
         .clock {
             display: grid;
-            gap: 16px;
-            margin-top: 24px;
+            gap: 18px;
+            margin-top: 20px;
         }
         .city {
             padding: 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: #fafafa;
+            border: 1px solid #e1e5ea;
+            border-radius: 12px;
+            background: #fdfdfd;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+            text-align: center;
         }
         .city strong {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        .dial {
+            display: inline-block;
+            width: 240px;
+            height: 240px;
+        }
+        .time-label {
+            display: block;
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: #555;
         }
     </style>
 </head>
@@ -50,37 +65,135 @@
         <div class="clock">
             <div class="city">
                 <strong>Sydney</strong>
-                <span id="sydney-time">Loading...</span>
+                <canvas id="sydney-clock" class="dial" width="240" height="240"></canvas>
+                <span id="sydney-time" class="time-label">Loading...</span>
             </div>
             <div class="city">
                 <strong>London</strong>
-                <span id="london-time">Loading...</span>
+                <canvas id="london-clock" class="dial" width="240" height="240"></canvas>
+                <span id="london-time" class="time-label">Loading...</span>
             </div>
             <div class="city">
                 <strong>Athens</strong>
-                <span id="athens-time">Loading...</span>
+                <canvas id="athens-clock" class="dial" width="240" height="240"></canvas>
+                <span id="athens-time" class="time-label">Loading...</span>
             </div>
         </div>
     </div>
     <script>
-        const formatTime = (zone) => {
-            return new Intl.DateTimeFormat('en-GB', {
-                timeZone: zone,
+        const clocks = [
+            { id: 'sydney', zone: 'Australia/Sydney' },
+            { id: 'london', zone: 'Europe/London' },
+            { id: 'athens', zone: 'Europe/Athens' }
+        ];
+
+        const getTimeParts = (timeZone) => {
+            const parts = new Intl.DateTimeFormat('en-GB', {
+                timeZone,
+                hour12: false,
                 hour: '2-digit',
                 minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-                weekday: 'short',
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            }).format(new Date());
+                second: '2-digit'
+            }).formatToParts(new Date());
+            const values = {};
+            for (const part of parts) {
+                if (part.type !== 'literal') {
+                    values[part.type] = parseInt(part.value, 10);
+                }
+            }
+            return values;
+        };
+
+        const drawFace = (ctx, radius) => {
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f8fbff';
+            ctx.fill();
+            ctx.lineWidth = radius * 0.06;
+            ctx.strokeStyle = '#5c6b7c';
+            ctx.stroke();
+
+            const grad = ctx.createRadialGradient(0, 0, radius * 0.92, 0, 0, radius * 1.05);
+            grad.addColorStop(0, 'rgba(255,255,255,0)');
+            grad.addColorStop(0.5, 'rgba(0,0,0,0.08)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.12)');
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = radius * 0.04;
+            ctx.stroke();
+        };
+
+        const drawTicks = (ctx, radius) => {
+            for (let i = 0; i < 60; i++) {
+                const angle = i * Math.PI / 30;
+                const inner = radius * (i % 5 === 0 ? 0.82 : 0.88);
+                const outer = radius * 0.96;
+                ctx.beginPath();
+                ctx.moveTo(inner * Math.cos(angle), inner * Math.sin(angle));
+                ctx.lineTo(outer * Math.cos(angle), outer * Math.sin(angle));
+                ctx.strokeStyle = i % 5 === 0 ? '#2f3b4d' : '#7a8794';
+                ctx.lineWidth = i % 5 === 0 ? 3 : 1.5;
+                ctx.stroke();
+            }
+        };
+
+        const drawNumbers = (ctx, radius) => {
+            ctx.font = `${radius * 0.14}px Arial`;
+            ctx.fillStyle = '#2f3b4d';
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'center';
+            for (let num = 1; num <= 12; num++) {
+                const angle = num * Math.PI / 6;
+                const x = radius * 0.68 * Math.cos(angle - Math.PI / 2);
+                const y = radius * 0.68 * Math.sin(angle - Math.PI / 2);
+                ctx.fillText(num.toString(), x, y);
+            }
+        };
+
+        const drawHand = (ctx, angle, length, width, color = '#2f3b4d') => {
+            ctx.beginPath();
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = color;
+            ctx.moveTo(0, 0);
+            ctx.rotate(angle);
+            ctx.lineTo(0, -length);
+            ctx.stroke();
+            ctx.rotate(-angle);
+        };
+
+        const drawClock = (ctx, radius, timeParts) => {
+            ctx.clearRect(-radius - 10, -radius - 10, radius * 2 + 20, radius * 2 + 20);
+            drawFace(ctx, radius);
+            drawTicks(ctx, radius);
+            drawNumbers(ctx, radius);
+
+            const hour = (timeParts.hour % 12) + timeParts.minute / 60 + timeParts.second / 3600;
+            const minute = timeParts.minute + timeParts.second / 60;
+            const second = timeParts.second;
+
+            drawHand(ctx, hour * Math.PI / 6, radius * 0.52, radius * 0.09);
+            drawHand(ctx, minute * Math.PI / 30, radius * 0.76, radius * 0.07);
+            drawHand(ctx, second * Math.PI / 30, radius * 0.88, radius * 0.03, '#d63649');
+
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * 0.08, 0, 2 * Math.PI);
+            ctx.fillStyle = '#2f3b4d';
+            ctx.fill();
         };
 
         const updateClocks = () => {
-            document.getElementById('sydney-time').textContent = formatTime('Australia/Sydney');
-            document.getElementById('london-time').textContent = formatTime('Europe/London');
-            document.getElementById('athens-time').textContent = formatTime('Europe/Athens');
+            clocks.forEach(({ id, zone }) => {
+                const timeParts = getTimeParts(zone);
+                const canvas = document.getElementById(`${id}-clock`);
+                const label = document.getElementById(`${id}-time`);
+                if (canvas && label) {
+                    const ctx = canvas.getContext('2d');
+                    const radius = canvas.width / 2 - 12;
+                    ctx.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2);
+                    drawClock(ctx, radius, timeParts);
+                    label.textContent = `${String(timeParts.hour).padStart(2, '0')}:${String(timeParts.minute).padStart(2, '0')}:${String(timeParts.second).padStart(2, '0')}`;
+                }
+            });
         };
 
         updateClocks();
