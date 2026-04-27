@@ -73,42 +73,6 @@
             font-size: 0.95rem;
             color: #555;
         }
-        .ticker-wrapper {
-            background: #111;
-            color: #f9f9f9;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            border-radius: 0 0 12px 12px;
-            overflow: hidden;
-            margin-top: 24px;
-            padding: 12px 0;
-        }
-        .ticker-label {
-            font-size: 0.95rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            margin-right: 18px;
-            white-space: nowrap;
-        }
-        .ticker {
-            display: inline-flex;
-            white-space: nowrap;
-            align-items: center;
-            animation: scroll 32s linear infinite;
-        }
-        .ticker span {
-            margin-right: 2.5rem;
-        }
-        .ticker a {
-            color: #f9f9f9;
-            text-decoration: none;
-        }
-        .ticker a:hover {
-            text-decoration: underline;
-        }
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
     </style>
 </head>
 <body>
@@ -129,12 +93,6 @@
                 <strong>Athens</strong>
                 <canvas id="athens-clock" class="dial" width="240" height="240"></canvas>
                 <span id="athens-time" class="time-label">Loading...</span>
-            </div>
-        </div>
-        <div class="ticker-wrapper">
-            <div class="ticker" id="news-ticker">
-                <span class="ticker-label">Latest world news:</span>
-                <span>Loading headlines...</span>
             </div>
         </div>
     </div>
@@ -254,6 +212,7 @@
             });
         };
 
+<<<<<<< HEAD
         const tickerSources = [
             'https://feeds.bbci.co.uk/news/world/rss.xml',
             'https://www.reuters.com/world/rss.xml'
@@ -328,6 +287,10 @@
             setInterval(loadNews, 5 * 60 * 1000);
         });
 
+=======
+        updateClocks();
+        setInterval(updateClocks, 1000);
+>>>>>>> parent of 675cf5e (Update Index.html)
     </script>
 </body>
 </html>
