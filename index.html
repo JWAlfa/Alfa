@@ -3,217 +3,743 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Clocks</title>
+    <title>Daily Tarot Reader</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            color: #333;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a0033 0%, #2d0052 50%, #1a0033 100%);
+            color: #e6d5ff;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            padding: 20px;
         }
+        
         .container {
-            background: #fff;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            width: min(1100px, 100%);
-            max-width: 95vw;
+            max-width: 800px;
+            width: 100%;
+            background: rgba(20, 10, 40, 0.9);
+            border: 2px solid #9d4edd;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(157, 78, 221, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
+        
         h1 {
-            margin-top: 0;
-            font-size: 1.5rem;
             text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #c8b6ff;
+            text-shadow: 0 2px 10px rgba(157, 78, 221, 0.6);
+            letter-spacing: 2px;
         }
-        .clock {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
-            margin-top: 20px;
-            align-items: start;
-        }
-        .city {
-            padding: 16px;
-            border: 1px solid #e1e5ea;
-            border-radius: 12px;
-            background: #fdfdfd;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        
+        .date-display {
             text-align: center;
-        }
-        .city.sydney {
-            border-color: #d63649;
-        }
-        .city.london {
-            border-color: #1e88e5;
-        }
-        .city.athens {
-            border-color: #f1c40f;
-        }
-        .city strong {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-        .city strong {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-        .dial {
-            display: inline-block;
-            width: 240px;
-            height: 240px;
-        }
-        .time-label {
-            display: block;
-            margin-top: 12px;
             font-size: 0.95rem;
-            color: #555;
+            color: #b19cd9;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .card-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card-display {
+            width: 200px;
+            height: 320px;
+            background: linear-gradient(135deg, #3d1a5f 0%, #2d0052 100%);
+            border: 3px solid #9d4edd;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(157, 78, 221, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+        
+        .card-display:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(157, 78, 221, 0.6),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-display.flipping {
+            animation: flip 0.6s ease-in-out;
+        }
+        
+        @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0deg); }
+        }
+        
+        .card-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd60a;
+            text-align: center;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        
+        .card-suit {
+            font-size: 0.9rem;
+            color: #b19cd9;
+            text-align: center;
+            margin-top: 5px;
+            z-index: 1;
+        }
+        
+        .draw-button {
+            background: linear-gradient(135deg, #9d4edd 0%, #7209b7 100%);
+            color: #fff;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4);
+        }
+        
+        .draw-button:hover {
+            background: linear-gradient(135deg, #b19cd9 0%, #9d4edd 100%);
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(157, 78, 221, 0.6);
+        }
+        
+        .draw-button:active {
+            transform: scale(0.98);
+        }
+        
+        .card-details {
+            background: rgba(157, 78, 221, 0.1);
+            border-left: 4px solid #9d4edd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #ffd60a;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .detail-content {
+            color: #e6d5ff;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .symbolism {
+            font-size: 0.85rem;
+            color: #d4b5ff;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .date-relevance {
+            background: rgba(255, 214, 10, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #ffd60a;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Current Time</h1>
-        <div class="clock">
-            <div class="city sydney">
-                <strong>Sydney</strong>
-                <canvas id="sydney-clock" class="dial" width="240" height="240"></canvas>
-                <span id="sydney-time" class="time-label">Loading...</span>
+        <h1>✨ Daily Tarot ✨</h1>
+        <div class="date-display" id="dateDisplay"></div>
+        
+        <div class="card-section">
+            <div class="card-display" id="cardDisplay">
+                <div class="card-name">?</div>
+                <div class="card-suit">Click to draw</div>
             </div>
-            <div class="city london">
-                <strong>London</strong>
-                <canvas id="london-clock" class="dial" width="240" height="240"></canvas>
-                <span id="london-time" class="time-label">Loading...</span>
+            <button class="draw-button" onclick="drawCard()">Draw Your Card</button>
+        </div>
+        
+        <div class="card-details" id="cardDetails" style="display: none;">
+            <div class="detail-section">
+                <div class="detail-label">Meaning</div>
+                <div class="detail-content" id="cardMeaning"></div>
             </div>
-            <div class="city athens">
-                <strong>Athens</strong>
-                <canvas id="athens-clock" class="dial" width="240" height="240"></canvas>
-                <span id="athens-time" class="time-label">Loading...</span>
+            <div class="detail-section">
+                <div class="detail-label">Symbolism</div>
+                <div class="detail-content symbolism" id="cardSymbolism"></div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-label">Today's Relevance</div>
+                <div class="detail-content date-relevance" id="cardRelevance"></div>
             </div>
         </div>
     </div>
+
     <script>
-        const clocks = [
-            { id: 'sydney', zone: 'Australia/Sydney', color: '#d63649' },
-            { id: 'london', zone: 'Europe/London', color: '#1e88e5' },
-            { id: 'athens', zone: 'Europe/Athens', color: '#f1c40f' }
+        const tarotDeck = [
+            {
+                name: "The Fool",
+                suit: "Major Arcana (0)",
+                meaning: "A new beginning, taking a leap of faith, or embarking on a journey. Represents innocence, spontaneity, and unlimited potential.",
+                symbolism: "The cliff edge represents the edge of the unknown; the dog represents loyalty; the knapsack symbolizes life's journey.",
+                arcana: "Major"
+            },
+            {
+                name: "The Magician",
+                suit: "Major Arcana (I)",
+                meaning: "Manifestation, resourcefulness, and power. You have the tools and skills to create what you want.",
+                symbolism: "The infinite symbol above his head represents infinite possibilities; his tools symbolize the four elements and material tools.",
+                arcana: "Major"
+            },
+            {
+                name: "The High Priestess",
+                suit: "Major Arcana (II)",
+                meaning: "Intuition, sacred knowledge, and the subconscious. Trust your inner wisdom and pay attention to hidden truths.",
+                symbolism: "The veil represents the boundary between worlds; the crescent moon symbolizes intuition; the pomegranates represent fertility.",
+                arcana: "Major"
+            },
+            {
+                name: "The Empress",
+                suit: "Major Arcana (III)",
+                meaning: "Femininity, beauty, fertility, and abundance. Represents nurturing, creativity, and prosperity.",
+                symbolism: "The crown of stars represents celestial influence; the waterfall symbolizes flow; the heart scepter represents power through love.",
+                arcana: "Major"
+            },
+            {
+                name: "The Emperor",
+                suit: "Major Arcana (IV)",
+                meaning: "Authority, structure, control, and leadership. A time to take charge and establish order.",
+                symbolism: "The throne represents authority; the orb and scepter are symbols of power; the rams symbolize strength and determination.",
+                arcana: "Major"
+            },
+            {
+                name: "The Hierophant",
+                suit: "Major Arcana (V)",
+                meaning: "Tradition, conformity, education, and spiritual guidance. Seeking wisdom from established sources.",
+                symbolism: "The three robes represent the three worlds; the keys symbolize unlocking spiritual secrets; the cross represents balance.",
+                arcana: "Major"
+            },
+            {
+                name: "The Lovers",
+                suit: "Major Arcana (VI)",
+                meaning: "Love, harmony, relationships, and important choices. A significant decision or meaningful connection.",
+                symbolism: "The angel represents divine love; the man and woman represent duality; the apple tree symbolizes knowledge and temptation.",
+                arcana: "Major"
+            },
+            {
+                name: "The Chariot",
+                suit: "Major Arcana (VII)",
+                meaning: "Determination, willpower, and control. Moving forward with confidence and purpose.",
+                symbolism: "The chariot represents your journey; the horses symbolize opposing forces in balance; the stars represent guidance.",
+                arcana: "Major"
+            },
+            {
+                name: "Strength",
+                suit: "Major Arcana (VIII)",
+                meaning: "Inner strength, courage, and patience. Overcoming challenges through gentle strength rather than force.",
+                symbolism: "The lion represents raw power; the woman represents gentle control; the infinity symbol represents eternity.",
+                arcana: "Major"
+            },
+            {
+                name: "The Hermit",
+                suit: "Major Arcana (IX)",
+                meaning: "Soul searching, introspection, and inner guidance. A time for reflection and seeking truth.",
+                symbolism: "The lantern represents illumination; the staff symbolizes spiritual power; the mountain represents the spiritual journey.",
+                arcana: "Major"
+            },
+            {
+                name: "Wheel of Fortune",
+                suit: "Major Arcana (X)",
+                meaning: "Good luck, destiny, and a turning point. Life cycles and karmic lessons.",
+                symbolism: "The wheel represents the cycle of life; the creatures represent the four elements; the colors represent life's changes.",
+                arcana: "Major"
+            },
+            {
+                name: "Justice",
+                suit: "Major Arcana (XI)",
+                meaning: "Justice, fairness, truth, and consequences. Karmic balance and accountability.",
+                symbolism: "The sword represents truth and objectivity; the scales represent balance; the throne represents authority and law.",
+                arcana: "Major"
+            },
+            {
+                name: "The Hanged Man",
+                suit: "Major Arcana (XII)",
+                meaning: "Suspension, restriction, and letting go. A time of pause and gaining new perspective.",
+                symbolism: "The rope represents surrender; the halo represents enlightenment; the tree represents grounding.",
+                arcana: "Major"
+            },
+            {
+                name: "Death",
+                suit: "Major Arcana (XIII)",
+                meaning: "Transformation, endings, and new beginnings. Necessary change and rebirth.",
+                symbolism: "The skeleton represents mortality and change; the scythe represents harvest; the colors represent the passage.",
+                arcana: "Major"
+            },
+            {
+                name: "Temperance",
+                suit: "Major Arcana (XIV)",
+                meaning: "Balance, moderation, and harmony. Finding equilibrium and patience.",
+                symbolism: "The angel represents divine intervention; the cups represent emotions; the flow of liquid symbolizes balance.",
+                arcana: "Major"
+            },
+            {
+                name: "The Devil",
+                suit: "Major Arcana (XV)",
+                meaning: "Bondage, materialism, and playfulness. Recognizing limitations and breaking free.",
+                symbolism: "The devil represents shadow self; the chains represent bondage; the dark background represents fear.",
+                arcana: "Major"
+            },
+            {
+                name: "The Tower",
+                suit: "Major Arcana (XVI)",
+                meaning: "Upheaval, revelation, and breakthrough. Sudden change that clears the way for new growth.",
+                symbolism: "The tower represents false structures; the lightning represents truth; the fall represents necessary collapse.",
+                arcana: "Major"
+            },
+            {
+                name: "The Star",
+                suit: "Major Arcana (XVII)",
+                meaning: "Hope, inspiration, and clarity. Faith and renewed sense of purpose.",
+                symbolism: "The stars represent hope and guidance; the water represents emotions; the maiden represents vulnerability and dreams.",
+                arcana: "Major"
+            },
+            {
+                name: "The Moon",
+                suit: "Major Arcana (XVIII)",
+                meaning: "Illusion, intuition, and the unconscious. Trust your intuition through uncertainty.",
+                symbolism: "The moon represents hidden knowledge; the dogs represent intuition; the lobster represents deep emotions.",
+                arcana: "Major"
+            },
+            {
+                name: "The Sun",
+                suit: "Major Arcana (XIX)",
+                meaning: "Success, vitality, and joy. Clarity, happiness, and achievement.",
+                symbolism: "The sun represents life force; the child represents innocence; the sunflowers represent happiness.",
+                arcana: "Major"
+            },
+            {
+                name: "Judgement",
+                suit: "Major Arcana (XX)",
+                meaning: "Awakening, reckoning, and absolution. A call to higher purpose and inner calling.",
+                symbolism: "The angel represents divine calling; the people represent humanity; the trumpet represents awakening.",
+                arcana: "Major"
+            },
+            {
+                name: "The World",
+                suit: "Major Arcana (XXI)",
+                meaning: "Completion, accomplishment, and fulfillment. Wholeness and the end of a cycle.",
+                symbolism: "The wreath represents completion; the four corners represent the four elements; the globe represents totality.",
+                arcana: "Major"
+            },
+            {
+                name: "Ace of Wands",
+                suit: "Wands",
+                meaning: "New opportunity, growth, and potential. Energy and inspiration.",
+                symbolism: "The wand represents potential; the flame represents passion; the sprouting leaves represent new growth.",
+                arcana: "Minor"
+            },
+            {
+                name: "Two of Wands",
+                suit: "Wands",
+                meaning: "Planning, decision, and leaving home. Contemplating possibilities.",
+                symbolism: "The globe represents the world; the wands represent choice; the figure represents contemplation.",
+                arcana: "Minor"
+            },
+            {
+                name: "Three of Wands",
+                suit: "Wands",
+                meaning: "Foresight, progress, and understanding. Expansion and enterprise.",
+                symbolism: "The wands represent creative forces; the ocean represents opportunities; the view represents progress.",
+                arcana: "Minor"
+            },
+            {
+                name: "Four of Wands",
+                suit: "Wands",
+                meaning: "Celebration, harmony, and home. Joy and community.",
+                symbolism: "The four wands represent stability; the wreath represents wholeness; the celebration represents harmony.",
+                arcana: "Minor"
+            },
+            {
+                name: "Five of Wands",
+                suit: "Wands",
+                meaning: "Conflict, competition, and struggle. Tension and disagreement.",
+                symbolism: "The five wands represent conflicting forces; the struggling figures represent discord; the background represents chaos.",
+                arcana: "Minor"
+            },
+            {
+                name: "Six of Wands",
+                suit: "Wands",
+                meaning: "Success, recognition, and confidence. Victory and public acknowledgment.",
+                symbolism: "The wreath represents victory; the figure represents confidence; the crowd represents recognition.",
+                arcana: "Minor"
+            },
+            {
+                name: "Seven of Wands",
+                suit: "Wands",
+                meaning: "Defensiveness, perseverance, and struggle. Standing your ground.",
+                symbolism: "The figure represents strength; the wands represent defense; the high ground represents advantage.",
+                arcana: "Minor"
+            },
+            {
+                name: "Eight of Wands",
+                suit: "Wands",
+                meaning: "Swift action, momentum, and progress. Things moving quickly.",
+                symbolism: "The eight wands represent rapid movement; the sky represents clarity; the landscape represents progress.",
+                arcana: "Minor"
+            },
+            {
+                name: "Nine of Wands",
+                suit: "Wands",
+                meaning: "Resilience, courage, and persistence. Nearing the end of a struggle.",
+                symbolism: "The nine wands represent boundaries; the figure represents strength; the bandage represents past struggle.",
+                arcana: "Minor"
+            },
+            {
+                name: "Ten of Wands",
+                suit: "Wands",
+                meaning: "Burden, responsibility, and completion. Carrying weight and pressure.",
+                symbolism: "The ten wands represent burden; the figure represents struggle; the path represents the journey.",
+                arcana: "Minor"
+            },
+            {
+                name: "Ace of Cups",
+                suit: "Cups",
+                meaning: "New feelings, emotional awakening, and relationships. Love and compassion.",
+                symbolism: "The cup represents the heart; the water represents emotion; the dove represents love.",
+                arcana: "Minor"
+            },
+            {
+                name: "Two of Cups",
+                suit: "Cups",
+                meaning: "Partnership, mutual respect, and emotional balance. Deep connection.",
+                symbolism: "Two cups represent union; the figures represent partnership; the lion represents strength in love.",
+                arcana: "Minor"
+            },
+            {
+                name: "Three of Cups",
+                suit: "Cups",
+                meaning: "Celebration, community, and joy. Friendship and harmony.",
+                symbolism: "Three cups represent unity; the figures represent friendship; the dancing represents celebration.",
+                arcana: "Minor"
+            },
+            {
+                name: "Four of Cups",
+                suit: "Cups",
+                meaning: "Apathy, contemplation, and indifference. Missing opportunities.",
+                symbolism: "The four cups represent options; the figure represents detachment; the hand represents new opportunity.",
+                arcana: "Minor"
+            },
+            {
+                name: "Five of Cups",
+                suit: "Cups",
+                meaning: "Grief, sorrow, and loss. Emotional difficulty and regret.",
+                symbolism: "The spilled cups represent loss; the figure represents sorrow; the remaining cups represent hope.",
+                arcana: "Minor"
+            },
+            {
+                name: "Six of Cups",
+                suit: "Cups",
+                meaning: "Nostalgia, innocence, and reunion. Simplicity and joy.",
+                symbolism: "The six cups represent memories; the children represent innocence; the flowers represent happiness.",
+                arcana: "Minor"
+            },
+            {
+                name: "Seven of Cups",
+                suit: "Cups",
+                meaning: "Illusions, choices, and wishful thinking. Confusion and opportunity.",
+                symbolism: "Seven cups represent possibilities; the visions represent illusions; the mind represents choice.",
+                arcana: "Minor"
+            },
+            {
+                name: "Eight of Cups",
+                suit: "Cups",
+                meaning: "Abandonment, withdrawal, and moving away. Seeking new meaning.",
+                symbolism: "The eight cups represent completion; the figure represents departure; the journey represents new path.",
+                arcana: "Minor"
+            },
+            {
+                name: "Nine of Cups",
+                suit: "Cups",
+                meaning: "Satisfaction, luxury, and contentment. Wish fulfillment.",
+                symbolism: "Nine cups represent abundance; the satisfied figure represents contentment; the luxury represents fulfillment.",
+                arcana: "Minor"
+            },
+            {
+                name: "Ten of Cups",
+                suit: "Cups",
+                meaning: "Family, harmony, and happiness. Fulfillment and joy.",
+                symbolism: "Ten cups represent wholeness; the family represents unity; the rainbow represents blessings.",
+                arcana: "Minor"
+            },
+            {
+                name: "Ace of Swords",
+                suit: "Swords",
+                meaning: "Clarity, truth, and breakthrough. Mental clarity and new perspective.",
+                symbolism: "The sword represents truth; the cloud represents confusion lifting; the crown represents clarity.",
+                arcana: "Minor"
+            },
+            {
+                name: "Two of Swords",
+                suit: "Swords",
+                meaning: "Indecision, stalemate, and detachment. Difficult choices.",
+                symbolism: "Two swords represent conflict; the blindfolded figure represents blocked judgment; the water represents emotion.",
+                arcana: "Minor"
+            },
+            {
+                name: "Three of Swords",
+                suit: "Swords",
+                meaning: "Sorrow, pain, and heartbreak. Difficult truths and challenges.",
+                symbolism: "Three swords represent pain; the storm represents turmoil; the heart represents emotional wounds.",
+                arcana: "Minor"
+            },
+            {
+                name: "Four of Swords",
+                suit: "Swords",
+                meaning: "Rest, restoration, and contemplation. Pause and recovery.",
+                symbolism: "Four swords represent rest; the reclined figure represents stillness; the window represents contemplation.",
+                arcana: "Minor"
+            },
+            {
+                name: "Five of Swords",
+                suit: "Swords",
+                meaning: "Defeat, conflict, and loss. Pyrrhic victory.",
+                symbolism: "Five swords represent conflict; the defeated figure represents loss; the leaving represent departure.",
+                arcana: "Minor"
+            },
+            {
+                name: "Six of Swords",
+                suit: "Swords",
+                meaning: "Transition, journeys, and progress. Moving towards better things.",
+                symbolism: "Six swords represent clarity; the boat represents transition; the calm water represents peaceful passage.",
+                arcana: "Minor"
+            },
+            {
+                name: "Seven of Swords",
+                suit: "Swords",
+                meaning: "Deception, betrayal, and strategy. Cunning and careful planning.",
+                symbolism: "Seven swords represent strategy; the sneaking figure represents deception; the camp represents trust broken.",
+                arcana: "Minor"
+            },
+            {
+                name: "Eight of Swords",
+                suit: "Swords",
+                meaning: "Restriction, confusion, and powerlessness. Feeling trapped and limited.",
+                symbolism: "Eight swords represent restriction; the blindfolded figure represents confusion; the castle represents limitation.",
+                arcana: "Minor"
+            },
+            {
+                name: "Nine of Swords",
+                suit: "Swords",
+                meaning: "Anxiety, nightmares, and despair. Mental anguish and worry.",
+                symbolism: "Nine swords represent thoughts; the anguished figure represents suffering; the night represents darkness.",
+                arcana: "Minor"
+            },
+            {
+                name: "Ten of Swords",
+                suit: "Swords",
+                meaning: "Betrayal, loss, and endings. Rock bottom and necessary conclusion.",
+                symbolism: "Ten swords represent complete defeat; the fallen figure represents surrender; the dawn represents new beginning.",
+                arcana: "Minor"
+            },
+            {
+                name: "Ace of Pentacles",
+                suit: "Pentacles",
+                meaning: "New opportunity, prosperity, and abundance. Financial gain and material blessings.",
+                symbolism: "The pentacle represents prosperity; the hand represents opportunity; the garden represents abundance.",
+                arcana: "Minor"
+            },
+            {
+                name: "Two of Pentacles",
+                suit: "Pentacles",
+                meaning: "Balance, flexibility, and adaptation. Juggling resources.",
+                symbolism: "Two pentacles represent balance; the juggler represents flexibility; the ship represents adaptability.",
+                arcana: "Minor"
+            },
+            {
+                name: "Three of Pentacles",
+                suit: "Pentacles",
+                meaning: "Teamwork, collaboration, and learning. Skilled effort.",
+                symbolism: "Three pentacles represent craft; the masons represent teamwork; the cathedral represents achievement.",
+                arcana: "Minor"
+            },
+            {
+                name: "Four of Pentacles",
+                suit: "Pentacles",
+                meaning: "Conservation, security, and control. Holding on tightly.",
+                symbolism: "Four pentacles represent possessions; the clenching figure represents control; the crown represents security.",
+                arcana: "Minor"
+            },
+            {
+                name: "Five of Pentacles",
+                suit: "Pentacles",
+                meaning: "Hardship, poverty, and insecurity. Difficult times and lack.",
+                symbolism: "Five pentacles represent loss; the suffering figures represent hardship; the chapel represents hope.",
+                arcana: "Minor"
+            },
+            {
+                name: "Six of Pentacles",
+                suit: "Pentacles",
+                meaning: "Generosity, charity, and sharing. Giving and receiving.",
+                symbolism: "Six pentacles represent distribution; the merchant represents generosity; the scales represent fairness.",
+                arcana: "Minor"
+            },
+            {
+                name: "Seven of Pentacles",
+                suit: "Pentacles",
+                meaning: "Perseverance, assessment, and investment. Evaluating progress.",
+                symbolism: "Seven pentacles represent growth; the farmer represents patience; the garden represents investment.",
+                arcana: "Minor"
+            },
+            {
+                name: "Eight of Pentacles",
+                suit: "Pentacles",
+                meaning: "Apprenticeship, skill, and mastery. Learning and dedication.",
+                symbolism: "Eight pentacles represent craftsmanship; the craftsman represents dedication; the city represents achievement.",
+                arcana: "Minor"
+            },
+            {
+                name: "Nine of Pentacles",
+                suit: "Pentacles",
+                meaning: "Abundance, independence, and security. Material comfort.",
+                symbolism: "Nine pentacles represent abundance; the woman represents independence; the vineyard represents success.",
+                arcana: "Minor"
+            },
+            {
+                name: "Ten of Pentacles",
+                suit: "Pentacles",
+                meaning: "Wealth, family, and legacy. Inheritance and completion.",
+                symbolism: "Ten pentacles represent completeness; the family represents legacy; the estate represents security.",
+                arcana: "Minor"
+            }
         ];
 
-        const getTimeParts = (timeZone) => {
-            const parts = new Intl.DateTimeFormat('en-GB', {
-                timeZone,
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            }).formatToParts(new Date());
-            const values = {};
-            for (const part of parts) {
-                if (part.type !== 'literal') {
-                    values[part.type] = parseInt(part.value, 10);
-                }
+        function updateDate() {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = today.toLocaleDateString('en-US', options);
+            document.getElementById('dateDisplay').textContent = `Today: ${dateString}`;
+        }
+
+        function getDateRelevance(date) {
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const dayOfWeek = date.getDay();
+            
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const dayOfWeekName = dayNames[dayOfWeek];
+            const monthName = monthNames[month - 1];
+            
+            const numerologySum = (day + month).toString().split('').map(Number).reduce((a, b) => a + b, 0);
+            
+            let relevance = `This card appears on ${dayOfWeekName}, in the month of ${monthName}. `;
+            relevance += `Numerologically, today (${day}/${month}) reduces to the number ${numerologySum}, `;
+            
+            switch(numerologySum) {
+                case 1:
+                    relevance += "representing new beginnings and leadership.";
+                    break;
+                case 2:
+                    relevance += "representing balance and duality.";
+                    break;
+                case 3:
+                    relevance += "representing creativity and expression.";
+                    break;
+                case 4:
+                    relevance += "representing stability and foundation.";
+                    break;
+                case 5:
+                    relevance += "representing change and adventure.";
+                    break;
+                case 6:
+                    relevance += "representing harmony and responsibility.";
+                    break;
+                case 7:
+                    relevance += "representing spirituality and reflection.";
+                    break;
+                case 8:
+                    relevance += "representing abundance and success.";
+                    break;
+                case 9:
+                    relevance += "representing completion and humanitarianism.";
+                    break;
             }
-            return values;
-        };
+            
+            return relevance;
+        }
 
-        const drawFace = (ctx, radius, accent) => {
-            ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = '#f8fbff';
-            ctx.fill();
-            ctx.lineWidth = radius * 0.06;
-            ctx.strokeStyle = accent;
-            ctx.stroke();
+        function drawCard() {
+            const cardDisplay = document.getElementById('cardDisplay');
+            const cardDetails = document.getElementById('cardDetails');
+            
+            cardDisplay.classList.add('flipping');
+            
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * tarotDeck.length);
+                const card = tarotDeck[randomIndex];
+                
+                document.querySelector('.card-name').textContent = card.name;
+                document.querySelector('.card-suit').textContent = card.suit;
+                
+                document.getElementById('cardMeaning').textContent = card.meaning;
+                document.getElementById('cardSymbolism').textContent = card.symbolism;
+                document.getElementById('cardRelevance').textContent = getDateRelevance(new Date());
+                
+                cardDetails.style.display = 'block';
+                cardDisplay.classList.remove('flipping');
+            }, 300);
+        }
 
-            const grad = ctx.createRadialGradient(0, 0, radius * 0.92, 0, 0, radius * 1.05);
-            grad.addColorStop(0, 'rgba(255,255,255,0)');
-            grad.addColorStop(0.5, 'rgba(0,0,0,0.08)');
-            grad.addColorStop(1, 'rgba(0,0,0,0.12)');
-            ctx.strokeStyle = grad;
-            ctx.lineWidth = radius * 0.04;
-            ctx.stroke();
-        };
-
-        const drawTicks = (ctx, radius) => {
-            for (let i = 0; i < 60; i++) {
-                const angle = i * Math.PI / 30;
-                const inner = radius * (i % 5 === 0 ? 0.82 : 0.88);
-                const outer = radius * 0.96;
-                ctx.beginPath();
-                ctx.moveTo(inner * Math.cos(angle), inner * Math.sin(angle));
-                ctx.lineTo(outer * Math.cos(angle), outer * Math.sin(angle));
-                ctx.strokeStyle = i % 5 === 0 ? '#2f3b4d' : '#7a8794';
-                ctx.lineWidth = i % 5 === 0 ? 3 : 1.5;
-                ctx.stroke();
-            }
-        };
-
-        const drawNumbers = (ctx, radius) => {
-            ctx.font = `${radius * 0.14}px Arial`;
-            ctx.fillStyle = '#2f3b4d';
-            ctx.textBaseline = 'middle';
-            ctx.textAlign = 'center';
-            for (let num = 1; num <= 12; num++) {
-                const angle = num * Math.PI / 6;
-                const x = radius * 0.68 * Math.cos(angle - Math.PI / 2);
-                const y = radius * 0.68 * Math.sin(angle - Math.PI / 2);
-                ctx.fillText(num.toString(), x, y);
-            }
-        };
-
-        const drawHand = (ctx, angle, length, width, color = '#2f3b4d') => {
-            ctx.beginPath();
-            ctx.lineWidth = width;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = color;
-            ctx.moveTo(0, 0);
-            ctx.rotate(angle);
-            ctx.lineTo(0, -length);
-            ctx.stroke();
-            ctx.rotate(-angle);
-        };
-
-        const drawClock = (ctx, radius, timeParts, accent) => {
-            ctx.clearRect(-radius - 10, -radius - 10, radius * 2 + 20, radius * 2 + 20);
-            drawFace(ctx, radius, accent);
-            drawTicks(ctx, radius);
-            drawNumbers(ctx, radius);
-
-            const hour = (timeParts.hour % 12) + timeParts.minute / 60 + timeParts.second / 3600;
-            const minute = timeParts.minute + timeParts.second / 60;
-            const second = timeParts.second;
-
-            drawHand(ctx, hour * Math.PI / 6, radius * 0.52, radius * 0.09);
-            drawHand(ctx, minute * Math.PI / 30, radius * 0.76, radius * 0.07);
-            drawHand(ctx, second * Math.PI / 30, radius * 0.88, radius * 0.03, accent);
-
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.08, 0, 2 * Math.PI);
-            ctx.fillStyle = accent;
-            ctx.fill();
-        };
-
-        const updateClocks = () => {
-            clocks.forEach(({ id, zone, color }) => {
-                const timeParts = getTimeParts(zone);
-                const canvas = document.getElementById(`${id}-clock`);
-                const label = document.getElementById(`${id}-time`);
-                if (canvas && label) {
-                    const ctx = canvas.getContext('2d');
-                    const radius = canvas.width / 2 - 12;
-                    ctx.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2);
-                    drawClock(ctx, radius, timeParts, color);
-                    label.textContent = `${String(timeParts.hour).padStart(2, '0')}:${String(timeParts.minute).padStart(2, '0')}:${String(timeParts.second).padStart(2, '0')}`;
-                }
-            });
-        };
-
-        updateClocks();
-        setInterval(updateClocks, 1000);
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            updateDate();
+        });
     </script>
 </body>
 </html>
