@@ -66,7 +66,7 @@
             border-radius: 15px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -74,6 +74,7 @@
                         inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            padding: 10px;
         }
         
         .card-display::before {
@@ -85,6 +86,31 @@
             bottom: 0;
             background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 50%);
             pointer-events: none;
+        }
+        
+        .card-image-container {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            line-height: 1;
+            z-index: 1;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, rgba(193, 156, 221, 0.15), transparent 70%);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(157, 78, 221, 0.3));
+        }
+        
+        .card-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            z-index: 1;
+            position: relative;
         }
         
         .card-display:hover {
@@ -198,8 +224,11 @@
         
         <div class="card-section">
             <div class="card-display" id="cardDisplay">
-                <div class="card-name">?</div>
-                <div class="card-suit">Click to draw</div>
+                <div class="card-image-container">?</div>
+                <div class="card-inner">
+                    <div class="card-name">?</div>
+                    <div class="card-suit">Click to draw</div>
+                </div>
             </div>
             <button class="draw-button" onclick="drawCard()">Draw Your Card</button>
         </div>
@@ -225,6 +254,7 @@
             {
                 name: "The Fool",
                 suit: "Major Arcana (0)",
+                icon: "🤡",
                 meaning: "A new beginning, taking a leap of faith, or embarking on a journey. Represents innocence, spontaneity, and unlimited potential.",
                 symbolism: "The cliff edge represents the edge of the unknown; the dog represents loyalty; the knapsack symbolizes life's journey.",
                 arcana: "Major"
@@ -232,6 +262,7 @@
             {
                 name: "The Magician",
                 suit: "Major Arcana (I)",
+                icon: "🎩",
                 meaning: "Manifestation, resourcefulness, and power. You have the tools and skills to create what you want.",
                 symbolism: "The infinite symbol above his head represents infinite possibilities; his tools symbolize the four elements and material tools.",
                 arcana: "Major"
@@ -239,6 +270,7 @@
             {
                 name: "The High Priestess",
                 suit: "Major Arcana (II)",
+                icon: "👑",
                 meaning: "Intuition, sacred knowledge, and the subconscious. Trust your inner wisdom and pay attention to hidden truths.",
                 symbolism: "The veil represents the boundary between worlds; the crescent moon symbolizes intuition; the pomegranates represent fertility.",
                 arcana: "Major"
@@ -246,6 +278,7 @@
             {
                 name: "The Empress",
                 suit: "Major Arcana (III)",
+                icon: "👸",
                 meaning: "Femininity, beauty, fertility, and abundance. Represents nurturing, creativity, and prosperity.",
                 symbolism: "The crown of stars represents celestial influence; the waterfall symbolizes flow; the heart scepter represents power through love.",
                 arcana: "Major"
@@ -253,6 +286,7 @@
             {
                 name: "The Emperor",
                 suit: "Major Arcana (IV)",
+                icon: "👨‍⚖️",
                 meaning: "Authority, structure, control, and leadership. A time to take charge and establish order.",
                 symbolism: "The throne represents authority; the orb and scepter are symbols of power; the rams symbolize strength and determination.",
                 arcana: "Major"
@@ -260,6 +294,7 @@
             {
                 name: "The Hierophant",
                 suit: "Major Arcana (V)",
+                icon: "🙏",
                 meaning: "Tradition, conformity, education, and spiritual guidance. Seeking wisdom from established sources.",
                 symbolism: "The three robes represent the three worlds; the keys symbolize unlocking spiritual secrets; the cross represents balance.",
                 arcana: "Major"
@@ -267,6 +302,7 @@
             {
                 name: "The Lovers",
                 suit: "Major Arcana (VI)",
+                icon: "💏",
                 meaning: "Love, harmony, relationships, and important choices. A significant decision or meaningful connection.",
                 symbolism: "The angel represents divine love; the man and woman represent duality; the apple tree symbolizes knowledge and temptation.",
                 arcana: "Major"
@@ -274,6 +310,7 @@
             {
                 name: "The Chariot",
                 suit: "Major Arcana (VII)",
+                icon: "🛞",
                 meaning: "Determination, willpower, and control. Moving forward with confidence and purpose.",
                 symbolism: "The chariot represents your journey; the horses symbolize opposing forces in balance; the stars represent guidance.",
                 arcana: "Major"
@@ -281,6 +318,7 @@
             {
                 name: "Strength",
                 suit: "Major Arcana (VIII)",
+                icon: "🦁",
                 meaning: "Inner strength, courage, and patience. Overcoming challenges through gentle strength rather than force.",
                 symbolism: "The lion represents raw power; the woman represents gentle control; the infinity symbol represents eternity.",
                 arcana: "Major"
@@ -288,6 +326,7 @@
             {
                 name: "The Hermit",
                 suit: "Major Arcana (IX)",
+                icon: "🏔️",
                 meaning: "Soul searching, introspection, and inner guidance. A time for reflection and seeking truth.",
                 symbolism: "The lantern represents illumination; the staff symbolizes spiritual power; the mountain represents the spiritual journey.",
                 arcana: "Major"
@@ -295,6 +334,7 @@
             {
                 name: "Wheel of Fortune",
                 suit: "Major Arcana (X)",
+                icon: "♻️",
                 meaning: "Good luck, destiny, and a turning point. Life cycles and karmic lessons.",
                 symbolism: "The wheel represents the cycle of life; the creatures represent the four elements; the colors represent life's changes.",
                 arcana: "Major"
@@ -302,6 +342,7 @@
             {
                 name: "Justice",
                 suit: "Major Arcana (XI)",
+                icon: "⚖️",
                 meaning: "Justice, fairness, truth, and consequences. Karmic balance and accountability.",
                 symbolism: "The sword represents truth and objectivity; the scales represent balance; the throne represents authority and law.",
                 arcana: "Major"
@@ -309,6 +350,7 @@
             {
                 name: "The Hanged Man",
                 suit: "Major Arcana (XII)",
+                icon: "🙃",
                 meaning: "Suspension, restriction, and letting go. A time of pause and gaining new perspective.",
                 symbolism: "The rope represents surrender; the halo represents enlightenment; the tree represents grounding.",
                 arcana: "Major"
@@ -316,6 +358,7 @@
             {
                 name: "Death",
                 suit: "Major Arcana (XIII)",
+                icon: "💀",
                 meaning: "Transformation, endings, and new beginnings. Necessary change and rebirth.",
                 symbolism: "The skeleton represents mortality and change; the scythe represents harvest; the colors represent the passage.",
                 arcana: "Major"
@@ -323,6 +366,7 @@
             {
                 name: "Temperance",
                 suit: "Major Arcana (XIV)",
+                icon: "🕊️",
                 meaning: "Balance, moderation, and harmony. Finding equilibrium and patience.",
                 symbolism: "The angel represents divine intervention; the cups represent emotions; the flow of liquid symbolizes balance.",
                 arcana: "Major"
@@ -330,6 +374,7 @@
             {
                 name: "The Devil",
                 suit: "Major Arcana (XV)",
+                icon: "😈",
                 meaning: "Bondage, materialism, and playfulness. Recognizing limitations and breaking free.",
                 symbolism: "The devil represents shadow self; the chains represent bondage; the dark background represents fear.",
                 arcana: "Major"
@@ -337,6 +382,7 @@
             {
                 name: "The Tower",
                 suit: "Major Arcana (XVI)",
+                icon: "⚡",
                 meaning: "Upheaval, revelation, and breakthrough. Sudden change that clears the way for new growth.",
                 symbolism: "The tower represents false structures; the lightning represents truth; the fall represents necessary collapse.",
                 arcana: "Major"
@@ -344,6 +390,7 @@
             {
                 name: "The Star",
                 suit: "Major Arcana (XVII)",
+                icon: "⭐",
                 meaning: "Hope, inspiration, and clarity. Faith and renewed sense of purpose.",
                 symbolism: "The stars represent hope and guidance; the water represents emotions; the maiden represents vulnerability and dreams.",
                 arcana: "Major"
@@ -351,6 +398,7 @@
             {
                 name: "The Moon",
                 suit: "Major Arcana (XVIII)",
+                icon: "🌙",
                 meaning: "Illusion, intuition, and the unconscious. Trust your intuition through uncertainty.",
                 symbolism: "The moon represents hidden knowledge; the dogs represent intuition; the lobster represents deep emotions.",
                 arcana: "Major"
@@ -358,6 +406,7 @@
             {
                 name: "The Sun",
                 suit: "Major Arcana (XIX)",
+                icon: "☀️",
                 meaning: "Success, vitality, and joy. Clarity, happiness, and achievement.",
                 symbolism: "The sun represents life force; the child represents innocence; the sunflowers represent happiness.",
                 arcana: "Major"
@@ -365,6 +414,7 @@
             {
                 name: "Judgement",
                 suit: "Major Arcana (XX)",
+                icon: "🔔",
                 meaning: "Awakening, reckoning, and absolution. A call to higher purpose and inner calling.",
                 symbolism: "The angel represents divine calling; the people represent humanity; the trumpet represents awakening.",
                 arcana: "Major"
@@ -372,6 +422,7 @@
             {
                 name: "The World",
                 suit: "Major Arcana (XXI)",
+                icon: "🌍",
                 meaning: "Completion, accomplishment, and fulfillment. Wholeness and the end of a cycle.",
                 symbolism: "The wreath represents completion; the four corners represent the four elements; the globe represents totality.",
                 arcana: "Major"
@@ -379,6 +430,7 @@
             {
                 name: "Ace of Wands",
                 suit: "Wands",
+                icon: "🔥",
                 meaning: "New opportunity, growth, and potential. Energy and inspiration.",
                 symbolism: "The wand represents potential; the flame represents passion; the sprouting leaves represent new growth.",
                 arcana: "Minor"
@@ -386,6 +438,7 @@
             {
                 name: "Two of Wands",
                 suit: "Wands",
+                icon: "🌐",
                 meaning: "Planning, decision, and leaving home. Contemplating possibilities.",
                 symbolism: "The globe represents the world; the wands represent choice; the figure represents contemplation.",
                 arcana: "Minor"
@@ -393,6 +446,7 @@
             {
                 name: "Three of Wands",
                 suit: "Wands",
+                icon: "🌅",
                 meaning: "Foresight, progress, and understanding. Expansion and enterprise.",
                 symbolism: "The wands represent creative forces; the ocean represents opportunities; the view represents progress.",
                 arcana: "Minor"
@@ -400,6 +454,7 @@
             {
                 name: "Four of Wands",
                 suit: "Wands",
+                icon: "🎉",
                 meaning: "Celebration, harmony, and home. Joy and community.",
                 symbolism: "The four wands represent stability; the wreath represents wholeness; the celebration represents harmony.",
                 arcana: "Minor"
@@ -407,6 +462,7 @@
             {
                 name: "Five of Wands",
                 suit: "Wands",
+                icon: "⚔️",
                 meaning: "Conflict, competition, and struggle. Tension and disagreement.",
                 symbolism: "The five wands represent conflicting forces; the struggling figures represent discord; the background represents chaos.",
                 arcana: "Minor"
@@ -414,6 +470,7 @@
             {
                 name: "Six of Wands",
                 suit: "Wands",
+                icon: "🏆",
                 meaning: "Success, recognition, and confidence. Victory and public acknowledgment.",
                 symbolism: "The wreath represents victory; the figure represents confidence; the crowd represents recognition.",
                 arcana: "Minor"
@@ -421,6 +478,7 @@
             {
                 name: "Seven of Wands",
                 suit: "Wands",
+                icon: "🛡️",
                 meaning: "Defensiveness, perseverance, and struggle. Standing your ground.",
                 symbolism: "The figure represents strength; the wands represent defense; the high ground represents advantage.",
                 arcana: "Minor"
@@ -428,6 +486,7 @@
             {
                 name: "Eight of Wands",
                 suit: "Wands",
+                icon: "💨",
                 meaning: "Swift action, momentum, and progress. Things moving quickly.",
                 symbolism: "The eight wands represent rapid movement; the sky represents clarity; the landscape represents progress.",
                 arcana: "Minor"
@@ -435,6 +494,7 @@
             {
                 name: "Nine of Wands",
                 suit: "Wands",
+                icon: "💪",
                 meaning: "Resilience, courage, and persistence. Nearing the end of a struggle.",
                 symbolism: "The nine wands represent boundaries; the figure represents strength; the bandage represents past struggle.",
                 arcana: "Minor"
@@ -442,6 +502,7 @@
             {
                 name: "Ten of Wands",
                 suit: "Wands",
+                icon: "🎒",
                 meaning: "Burden, responsibility, and completion. Carrying weight and pressure.",
                 symbolism: "The ten wands represent burden; the figure represents struggle; the path represents the journey.",
                 arcana: "Minor"
@@ -449,6 +510,7 @@
             {
                 name: "Ace of Cups",
                 suit: "Cups",
+                icon: "🍷",
                 meaning: "New feelings, emotional awakening, and relationships. Love and compassion.",
                 symbolism: "The cup represents the heart; the water represents emotion; the dove represents love.",
                 arcana: "Minor"
@@ -456,6 +518,7 @@
             {
                 name: "Two of Cups",
                 suit: "Cups",
+                icon: "💕",
                 meaning: "Partnership, mutual respect, and emotional balance. Deep connection.",
                 symbolism: "Two cups represent union; the figures represent partnership; the lion represents strength in love.",
                 arcana: "Minor"
@@ -463,6 +526,7 @@
             {
                 name: "Three of Cups",
                 suit: "Cups",
+                icon: "👯",
                 meaning: "Celebration, community, and joy. Friendship and harmony.",
                 symbolism: "Three cups represent unity; the figures represent friendship; the dancing represents celebration.",
                 arcana: "Minor"
@@ -470,6 +534,7 @@
             {
                 name: "Four of Cups",
                 suit: "Cups",
+                icon: "😐",
                 meaning: "Apathy, contemplation, and indifference. Missing opportunities.",
                 symbolism: "The four cups represent options; the figure represents detachment; the hand represents new opportunity.",
                 arcana: "Minor"
@@ -477,6 +542,7 @@
             {
                 name: "Five of Cups",
                 suit: "Cups",
+                icon: "😭",
                 meaning: "Grief, sorrow, and loss. Emotional difficulty and regret.",
                 symbolism: "The spilled cups represent loss; the figure represents sorrow; the remaining cups represent hope.",
                 arcana: "Minor"
@@ -484,6 +550,7 @@
             {
                 name: "Six of Cups",
                 suit: "Cups",
+                icon: "🌸",
                 meaning: "Nostalgia, innocence, and reunion. Simplicity and joy.",
                 symbolism: "The six cups represent memories; the children represent innocence; the flowers represent happiness.",
                 arcana: "Minor"
@@ -491,6 +558,7 @@
             {
                 name: "Seven of Cups",
                 suit: "Cups",
+                icon: "✨",
                 meaning: "Illusions, choices, and wishful thinking. Confusion and opportunity.",
                 symbolism: "Seven cups represent possibilities; the visions represent illusions; the mind represents choice.",
                 arcana: "Minor"
@@ -498,6 +566,7 @@
             {
                 name: "Eight of Cups",
                 suit: "Cups",
+                icon: "🚶",
                 meaning: "Abandonment, withdrawal, and moving away. Seeking new meaning.",
                 symbolism: "The eight cups represent completion; the figure represents departure; the journey represents new path.",
                 arcana: "Minor"
@@ -505,6 +574,7 @@
             {
                 name: "Nine of Cups",
                 suit: "Cups",
+                icon: "😊",
                 meaning: "Satisfaction, luxury, and contentment. Wish fulfillment.",
                 symbolism: "Nine cups represent abundance; the satisfied figure represents contentment; the luxury represents fulfillment.",
                 arcana: "Minor"
@@ -512,6 +582,7 @@
             {
                 name: "Ten of Cups",
                 suit: "Cups",
+                icon: "👨‍👩‍👧‍👦",
                 meaning: "Family, harmony, and happiness. Fulfillment and joy.",
                 symbolism: "Ten cups represent wholeness; the family represents unity; the rainbow represents blessings.",
                 arcana: "Minor"
@@ -519,6 +590,7 @@
             {
                 name: "Ace of Swords",
                 suit: "Swords",
+                icon: "⚔️",
                 meaning: "Clarity, truth, and breakthrough. Mental clarity and new perspective.",
                 symbolism: "The sword represents truth; the cloud represents confusion lifting; the crown represents clarity.",
                 arcana: "Minor"
@@ -526,6 +598,7 @@
             {
                 name: "Two of Swords",
                 suit: "Swords",
+                icon: "🙈",
                 meaning: "Indecision, stalemate, and detachment. Difficult choices.",
                 symbolism: "Two swords represent conflict; the blindfolded figure represents blocked judgment; the water represents emotion.",
                 arcana: "Minor"
@@ -533,6 +606,7 @@
             {
                 name: "Three of Swords",
                 suit: "Swords",
+                icon: "💔",
                 meaning: "Sorrow, pain, and heartbreak. Difficult truths and challenges.",
                 symbolism: "Three swords represent pain; the storm represents turmoil; the heart represents emotional wounds.",
                 arcana: "Minor"
@@ -540,6 +614,7 @@
             {
                 name: "Four of Swords",
                 suit: "Swords",
+                icon: "😴",
                 meaning: "Rest, restoration, and contemplation. Pause and recovery.",
                 symbolism: "Four swords represent rest; the reclined figure represents stillness; the window represents contemplation.",
                 arcana: "Minor"
@@ -547,6 +622,7 @@
             {
                 name: "Five of Swords",
                 suit: "Swords",
+                icon: "😔",
                 meaning: "Defeat, conflict, and loss. Pyrrhic victory.",
                 symbolism: "Five swords represent conflict; the defeated figure represents loss; the leaving represent departure.",
                 arcana: "Minor"
@@ -554,6 +630,7 @@
             {
                 name: "Six of Swords",
                 suit: "Swords",
+                icon: "🚤",
                 meaning: "Transition, journeys, and progress. Moving towards better things.",
                 symbolism: "Six swords represent clarity; the boat represents transition; the calm water represents peaceful passage.",
                 arcana: "Minor"
@@ -561,6 +638,7 @@
             {
                 name: "Seven of Swords",
                 suit: "Swords",
+                icon: "🕵️",
                 meaning: "Deception, betrayal, and strategy. Cunning and careful planning.",
                 symbolism: "Seven swords represent strategy; the sneaking figure represents deception; the camp represents trust broken.",
                 arcana: "Minor"
@@ -568,6 +646,7 @@
             {
                 name: "Eight of Swords",
                 suit: "Swords",
+                icon: "🔗",
                 meaning: "Restriction, confusion, and powerlessness. Feeling trapped and limited.",
                 symbolism: "Eight swords represent restriction; the blindfolded figure represents confusion; the castle represents limitation.",
                 arcana: "Minor"
@@ -575,6 +654,7 @@
             {
                 name: "Nine of Swords",
                 suit: "Swords",
+                icon: "😰",
                 meaning: "Anxiety, nightmares, and despair. Mental anguish and worry.",
                 symbolism: "Nine swords represent thoughts; the anguished figure represents suffering; the night represents darkness.",
                 arcana: "Minor"
@@ -582,6 +662,7 @@
             {
                 name: "Ten of Swords",
                 suit: "Swords",
+                icon: "⛅",
                 meaning: "Betrayal, loss, and endings. Rock bottom and necessary conclusion.",
                 symbolism: "Ten swords represent complete defeat; the fallen figure represents surrender; the dawn represents new beginning.",
                 arcana: "Minor"
@@ -589,6 +670,7 @@
             {
                 name: "Ace of Pentacles",
                 suit: "Pentacles",
+                icon: "💎",
                 meaning: "New opportunity, prosperity, and abundance. Financial gain and material blessings.",
                 symbolism: "The pentacle represents prosperity; the hand represents opportunity; the garden represents abundance.",
                 arcana: "Minor"
@@ -596,6 +678,7 @@
             {
                 name: "Two of Pentacles",
                 suit: "Pentacles",
+                icon: "🎪",
                 meaning: "Balance, flexibility, and adaptation. Juggling resources.",
                 symbolism: "Two pentacles represent balance; the juggler represents flexibility; the ship represents adaptability.",
                 arcana: "Minor"
@@ -603,6 +686,7 @@
             {
                 name: "Three of Pentacles",
                 suit: "Pentacles",
+                icon: "🏗️",
                 meaning: "Teamwork, collaboration, and learning. Skilled effort.",
                 symbolism: "Three pentacles represent craft; the masons represent teamwork; the cathedral represents achievement.",
                 arcana: "Minor"
@@ -610,6 +694,7 @@
             {
                 name: "Four of Pentacles",
                 suit: "Pentacles",
+                icon: "👜",
                 meaning: "Conservation, security, and control. Holding on tightly.",
                 symbolism: "Four pentacles represent possessions; the clenching figure represents control; the crown represents security.",
                 arcana: "Minor"
@@ -617,6 +702,7 @@
             {
                 name: "Five of Pentacles",
                 suit: "Pentacles",
+                icon: "🌧️",
                 meaning: "Hardship, poverty, and insecurity. Difficult times and lack.",
                 symbolism: "Five pentacles represent loss; the suffering figures represent hardship; the chapel represents hope.",
                 arcana: "Minor"
@@ -624,6 +710,7 @@
             {
                 name: "Six of Pentacles",
                 suit: "Pentacles",
+                icon: "🤝",
                 meaning: "Generosity, charity, and sharing. Giving and receiving.",
                 symbolism: "Six pentacles represent distribution; the merchant represents generosity; the scales represent fairness.",
                 arcana: "Minor"
@@ -631,6 +718,7 @@
             {
                 name: "Seven of Pentacles",
                 suit: "Pentacles",
+                icon: "🌱",
                 meaning: "Perseverance, assessment, and investment. Evaluating progress.",
                 symbolism: "Seven pentacles represent growth; the farmer represents patience; the garden represents investment.",
                 arcana: "Minor"
@@ -638,6 +726,7 @@
             {
                 name: "Eight of Pentacles",
                 suit: "Pentacles",
+                icon: "🔨",
                 meaning: "Apprenticeship, skill, and mastery. Learning and dedication.",
                 symbolism: "Eight pentacles represent craftsmanship; the craftsman represents dedication; the city represents achievement.",
                 arcana: "Minor"
@@ -645,6 +734,7 @@
             {
                 name: "Nine of Pentacles",
                 suit: "Pentacles",
+                icon: "🍇",
                 meaning: "Abundance, independence, and security. Material comfort.",
                 symbolism: "Nine pentacles represent abundance; the woman represents independence; the vineyard represents success.",
                 arcana: "Minor"
@@ -652,6 +742,7 @@
             {
                 name: "Ten of Pentacles",
                 suit: "Pentacles",
+                icon: "🏰",
                 meaning: "Wealth, family, and legacy. Inheritance and completion.",
                 symbolism: "Ten pentacles represent completeness; the family represents legacy; the estate represents security.",
                 arcana: "Minor"
@@ -724,6 +815,7 @@
                 const randomIndex = Math.floor(Math.random() * tarotDeck.length);
                 const card = tarotDeck[randomIndex];
                 
+                document.querySelector('.card-image-container').textContent = card.icon;
                 document.querySelector('.card-name').textContent = card.name;
                 document.querySelector('.card-suit').textContent = card.suit;
                 
