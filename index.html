@@ -893,7 +893,7 @@
                     cardDisplay.querySelector('.card-name').textContent = card.name;
                     cardDisplay.querySelector('.card-suit').textContent = card.suit;
 
-                    document.getElementById('cardMeaning').textContent = card.meaning;
+                    document.getElementById('cardMeaning').textContent = getExpandedDescription(card);
                     document.getElementById('cardSymbolism').textContent = card.symbolism;
                     document.getElementById('cardRelevance').textContent = getDateRelevance(new Date());
 
@@ -930,15 +930,15 @@
                     const present = tarotDeck[picks[1]];
                     const future = tarotDeck[picks[2]];
 
-                    document.getElementById('pastMeaning').textContent = past.meaning;
+                    document.getElementById('pastMeaning').textContent = getExpandedDescription(past);
                     document.getElementById('pastSymbolism').textContent = past.symbolism;
                     document.getElementById('pastRelevance').textContent = '';
 
-                    document.getElementById('presentMeaning').textContent = present.meaning;
+                    document.getElementById('presentMeaning').textContent = getExpandedDescription(present);
                     document.getElementById('presentSymbolism').textContent = present.symbolism;
                     document.getElementById('presentRelevance').textContent = '';
 
-                    document.getElementById('futureMeaning').textContent = future.meaning;
+                    document.getElementById('futureMeaning').textContent = getExpandedDescription(future);
                     document.getElementById('futureSymbolism').textContent = future.symbolism;
                     document.getElementById('futureRelevance').textContent = '';
 
@@ -1027,6 +1027,56 @@
             lines.push(`In short: ${past.name} set the conditions; ${present.name} presents the turning or challenge; ${future.name} suggests the path forward.`);
 
             return lines.join(' ');
+        }
+
+        // Generate a richer, expanded description for a card dynamically
+        function getExpandedDescription(card) {
+            if (!card) return '';
+
+            const suitMap = {
+                'wands': 'action, creativity and enterprise',
+                'cups': 'emotion, relationships and inner life',
+                'swords': 'thought, conflict and clarity',
+                'pentacles': 'resources, work and the material realm'
+            };
+
+            const name = card.name || 'This card';
+            const arcanaLine = (card.arcana && card.arcana.toLowerCase().includes('major'))
+                ? `${name} is a Major Arcana card: a theme that often points to larger life lessons or turning points.`
+                : `${name} belongs to the ${card.suit || 'Minor Arcana'}, bringing practical, everyday guidance.`;
+
+            // derive a short numerology hint when a number appears in the name (e.g., "Three of Wands")
+            let numerologyLine = '';
+            const numMatch = (card.name || '').match(/^(The )?(\w+)|\b(\d+)|\b(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Ace)\b/i);
+            if (numMatch) {
+                // simple mapping for common numerology cues
+                const map = { 'one': 'initiation and potential', 'ace': 'new beginnings', 'two': 'balance and partnership', 'three': 'growth and expression', 'four': 'stability and foundation', 'five': 'change and challenge', 'six': 'harmony and support', 'seven': 'assessment and patience', 'eight': 'power and movement', 'nine': 'completion and refinement', 'ten': 'fulfillment and endings' };
+                const found = (numMatch[0] || '').toLowerCase();
+                const n = map[found];
+                if (n) numerologyLine = `Numerologically, this card suggests ${n}.`;
+            }
+
+            const suitKey = (card.suit || '').toLowerCase().replace(/[^a-z]/g, '');
+            const suitLine = suitMap[suitKey] ? `It emphasizes matters of ${suitMap[suitKey]}.` : '';
+
+            // build an advice/shadow line using keywords found in meaning/symbolism
+            const text = ((card.meaning || '') + ' ' + (card.symbolism || '')).toLowerCase();
+            const adviceParts = [];
+            if (/new|begin|opportunity|potential|spark/.test(text)) adviceParts.push('consider embracing fresh starts with deliberate intent');
+            if (/surrender|let go|pause|sacrifice|hanged/.test(text)) adviceParts.push('practice patience and allow perspective to shift');
+            if (/conflict|struggle|battle|fight|tension/.test(text)) adviceParts.push('choose clarity over reactivity and pick your ground wisely');
+            if (/abundance|wealth|security|legacy|comfort/.test(text)) adviceParts.push('review attachments to material comfort — are they supporting or limiting you?');
+            if (/intuition|hidden|subconscious|veil|moon/.test(text)) adviceParts.push('trust subtle impressions and look beneath the surface before deciding');
+            const adviceLine = adviceParts.length ? `Practical guidance: ${adviceParts.join('; ')}.` : '';
+
+            // shadow / warning
+            let shadowLine = '';
+            if (/devil|bondage|chains|materialism/.test(text)) shadowLine = 'Watch for patterns of compulsion or attachment — liberation begins with awareness.';
+            if (/tower|death|upheaval/.test(text)) shadowLine = shadowLine || 'Beware that abrupt change may be uncomfortable but can clear the ground for something new.';
+
+            // assemble paragraph-style expanded description
+            const parts = [arcanaLine, suitLine, numerologyLine, card.meaning || '', card.symbolism || '', adviceLine, shadowLine].filter(Boolean);
+            return parts.join(' ');
         }
 
         // Initialize on page load
