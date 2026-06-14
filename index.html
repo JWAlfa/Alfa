@@ -955,45 +955,76 @@
         }
 
         function combineInterpretation(past, present, future) {
-            // helper to search keywords in card text
-            const text = c => ((c.name || '') + ' ' + (c.meaning || '') + ' ' + (c.symbolism || '')).toLowerCase();
+            // Build a more nuanced synthesis using suits, arcana, and special cases
+            const joinText = c => ((c.name || '') + ' ' + (c.meaning || '') + ' ' + (c.symbolism || '')).toLowerCase();
+            const includes = (c, arr) => arr.some(w => joinText(c).includes(w));
 
-            const hasAny = (c, words) => words.some(w => text(c).includes(w));
+            const suitThemes = {
+                'wands': 'action, ambition and projects',
+                'cups': 'feelings, relationships and intuition',
+                'swords': 'thoughts, decisions and challenge',
+                'pentacles': 'resources, work and home'
+            };
 
-            const security = ['wealth','abundance','legacy','inheritance','security','comfort','family','stability','prosper'];
-            const surrender = ['surrender','letting go','pause','suspension','hanged','release','sacrifice','stillness','withdrawal'];
-            const newstart = ['new','ace','begin','opportunity','potential','inspiration','spark','growth','start'];
-            const conflict = ['conflict','struggle','battle','competition','tension','fight'];
-            const change = ['change','transform','death','tower','upheaval','transition','ending','rebirth'];
+            const isMajor = c => (c.arcana || '').toLowerCase() === 'major';
 
-            const pastTheme = hasAny(past, security) ? 'a period of material or emotional security' : hasAny(past, change) ? 'a time of big changes' : hasAny(past, conflict) ? 'a period of struggle or competition' : 'a meaningful stage that shaped you';
-            const presentTheme = hasAny(present, surrender) ? 'a request to pause and surrender your usual approach' : hasAny(present, change) ? 'a moment of transition' : hasAny(present, conflict) ? 'a direct challenge or tension' : 'a present focus of attention';
-            const futureTheme = hasAny(future, newstart) ? 'an opening for fresh energy and beginnings' : hasAny(future, security) ? 'a return to stability and comfort' : hasAny(future, change) ? 'continued transformation' : 'a forthcoming development to watch for';
+            const pastSuitTheme = suitThemes[(past.suit || '').toLowerCase().replace(/major arcana.*| /g, '')] || '';
+            const presentSuitTheme = suitThemes[(present.suit || '').toLowerCase().replace(/major arcana.*| /g, '')] || '';
+            const futureSuitTheme = suitThemes[(future.suit || '').toLowerCase().replace(/major arcana.*| /g, '')] || '';
 
-            // Build connection sentences rather than restating meanings
             const lines = [];
-            lines.push(`With ${past.name} in the past, there is evidence of ${pastTheme}.`);
 
-            // contrast or continuity
-            if (hasAny(past, security) && hasAny(present, surrender)) {
-                lines.push(`Now, ${present.name} suggests you are being asked to let go of some of that comfort — to pause, see things from a different angle, and release old certainties.`);
-            } else if (hasAny(past, conflict) && hasAny(present, surrender)) {
-                lines.push(`Currently, ${present.name} asks for a calmer, more reflective stance after previous conflict — a chance to step back.`);
-            } else if (past.suit === present.suit) {
-                lines.push(`The same suit in past and present shows a continuing focus: ${presentTheme}.`);
+            // Past summary
+            if (isMajor(past)) lines.push(`${past.name} in the past suggests a significant life theme that set your recent context.`);
+            else if (pastSuitTheme) lines.push(`${past.name} shows a past focus on ${pastSuitTheme}.`);
+            else lines.push(`${past.name} influenced your situation in the recent past.`);
+
+            // Present — look for clear pivot signals like Hanged Man, Death, Tower
+            const presentNameLower = (present.name || '').toLowerCase();
+            if (presentNameLower.includes('hanged')) {
+                lines.push(`Right now, ${present.name} asks you to surrender old comforts or perspectives and see the situation from a new angle.`);
+            } else if (presentNameLower.includes('death') || presentNameLower.includes('tower')) {
+                lines.push(`Presently, ${present.name} signals necessary endings or sudden change that disrupts old patterns.`);
+            } else if (isMajor(present)) {
+                lines.push(`At present, ${present.name} brings a major lesson or turning point to pay attention to.`);
+            } else if (presentSuitTheme) {
+                lines.push(`At present the theme shifts toward ${presentSuitTheme}, changing how you apply your past experiences.`);
             } else {
-                lines.push(`At present, ${present.name} marks ${presentTheme}, shifting the direction from the past.`);
+                lines.push(`Currently, ${present.name} is the issue at hand and invites your attention.`);
             }
 
-            // bridge to future
-            if (hasAny(future, newstart)) {
-                lines.push(`This shift clears room for ${future.name} — ${futureTheme}, offering energy to begin or pursue a fresh path.`);
-            } else {
-                lines.push(`What follows (${future.name}) points toward ${futureTheme}, the natural result of the present changes.`);
+            // Contrast or reinforcement
+            if (pastSuitTheme && presentSuitTheme && pastSuitTheme === presentSuitTheme) {
+                lines.push(`This shows continuity: the same thread continues to unfold, moving from background to current focus.`);
+            } else if (isMajor(past) && !isMajor(present)) {
+                lines.push(`A major past theme now plays out in everyday terms, asking practical adjustments.`);
+            } else if (!isMajor(past) && isMajor(present)) {
+                lines.push(`A practical past situation is now lifted into a larger, life-level lesson.`);
             }
 
-            // final integrative line
-            lines.push(`In short: your history (${past.name}) set up the conditions; the present (${present.name}) asks for a turning of perspective or release; together they prepare the ground for ${future.name} to bring new possibility.`);
+            // Future — check for Aces and growth signals
+            const futureNameLower = (future.name || '').toLowerCase();
+            if (futureNameLower.includes('ace') || includes(future, ['new','begin','opportunity','spark','potential'])) {
+                lines.push(`Looking ahead, ${future.name} promises fresh energy and a new beginning if you allow the present change to clear the way.`);
+            } else if (isMajor(future)) {
+                lines.push(`The future (${future.name}) points to a lasting resolution or culmination that follows these shifts.`);
+            } else if (futureSuitTheme) {
+                lines.push(`The outcome leans toward ${futureSuitTheme}, suggesting where your efforts or feelings will land.`);
+            } else {
+                lines.push(`The final card (${future.name}) signals what may result from your present choices.`);
+            }
+
+            // Specific useful pattern: past security -> present surrender -> future ace/newstart
+            if (includes(past, ['abundance','wealth','security','comfort','legacy']) && (presentNameLower.includes('hanged') || includes(present, ['surrender','letting go','pause']))) {
+                if (futureNameLower.includes('ace') || includes(future, ['new','begin','opportunity'])) {
+                    lines.push(`Put together: you may have experienced plenty before; now you're being asked to release or reframe those comforts so that a true fresh start can appear.`);
+                } else {
+                    lines.push(`Put together: past comforts are being questioned; this is prime time to examine attachments so future outcomes can shift.`);
+                }
+            }
+
+            // Summation
+            lines.push(`In short: ${past.name} set the conditions; ${present.name} presents the turning or challenge; ${future.name} suggests the path forward.`);
 
             return lines.join(' ');
         }
