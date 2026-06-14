@@ -299,6 +299,10 @@
                 <div class="detail-content symbolism" id="futureSymbolism"></div>
                 <div class="detail-content date-relevance" id="futureRelevance"></div>
             </div>
+            <div class="detail-section">
+                <div class="detail-label">Combined Reading</div>
+                <div class="detail-content" id="threeCombined" style="font-weight:600; color:#ffd; line-height:1.4;"></div>
+            </div>
         </div>
     </div>
 
@@ -934,9 +938,30 @@
                     document.getElementById('futureSymbolism').textContent = future.symbolism;
                     document.getElementById('futureRelevance').textContent = getDateRelevance(new Date());
 
+                    // generate combined short interpretation
+                    const combined = combineInterpretation(past, present, future);
+                    document.getElementById('threeCombined').textContent = combined;
+
                     threeCardDetails.style.display = 'block';
                 }, 350);
             }
+        }
+
+        function combineInterpretation(past, present, future) {
+            const short = s => (s.meaning || '').split('.').map(t => t.trim()).filter(Boolean)[0] || s.name;
+            const pShort = short(past);
+            const prShort = short(present);
+            const fShort = short(future);
+
+            // detect heavy themes
+            const majors = [past, present, future].filter(c => c.arcana === 'Major').length;
+            let connective = '';
+            if (majors >= 2) connective = 'These are major-life themes unfolding: ';
+            else if ([past.suit, present.suit, future.suit].every(s => s === past.suit)) connective = 'A single suit theme appears: ';
+            else connective = 'Taken together, they tell a short story: ';
+
+            const story = `${past.name} — ${pShort}. ${present.name} — ${prShort}. ${future.name} — ${fShort}. ${connective}${pShort.toLowerCase()} flows into ${prShort.toLowerCase()} and leads toward ${fShort.toLowerCase()}.`;
+            return story;
         }
 
         // Initialize on page load
