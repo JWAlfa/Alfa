@@ -223,16 +223,48 @@
         <div class="date-display" id="dateDisplay"></div>
         
         <div class="card-section">
-            <div class="card-display" id="cardDisplay">
-                <div class="card-image-container">?</div>
-                <div class="card-inner">
-                    <div class="card-name">?</div>
-                    <div class="card-suit">Click to draw</div>
+            <div class="spread-select" style="text-align:center; margin-bottom:8px; color:#dcd0ff;">
+                <label style="margin-right:12px;"><input type="radio" name="spread" value="single" checked> Single Card</label>
+                <label><input type="radio" name="spread" value="three"> Three-Card Spread (Past / Present / Future)</label>
+            </div>
+
+            <div class="single-container" style="display:block;">
+                <div class="card-display" id="cardDisplay">
+                    <div class="card-image-container">?</div>
+                    <div class="card-inner">
+                        <div class="card-name">?</div>
+                        <div class="card-suit">Click to draw</div>
+                    </div>
                 </div>
             </div>
-            <button class="draw-button" onclick="drawCard()">Draw Your Card</button>
+
+            <div class="three-card-row" style="display:none; gap:14px; width:100%; justify-content:center;">
+                <div class="card-display" id="card1" style="width:160px; height:260px;">
+                    <div class="card-image-container">?</div>
+                    <div class="card-inner">
+                        <div class="card-name">?</div>
+                        <div class="card-suit">&nbsp;</div>
+                    </div>
+                </div>
+                <div class="card-display" id="card2" style="width:160px; height:260px;">
+                    <div class="card-image-container">?</div>
+                    <div class="card-inner">
+                        <div class="card-name">?</div>
+                        <div class="card-suit">&nbsp;</div>
+                    </div>
+                </div>
+                <div class="card-display" id="card3" style="width:160px; height:260px;">
+                    <div class="card-image-container">?</div>
+                    <div class="card-inner">
+                        <div class="card-name">?</div>
+                        <div class="card-suit">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="draw-button" onclick="drawCard()">Draw</button>
         </div>
-        
+
         <div class="card-details" id="cardDetails" style="display: none;">
             <div class="detail-section">
                 <div class="detail-label">Meaning</div>
@@ -245,6 +277,27 @@
             <div class="detail-section">
                 <div class="detail-label">Today's Relevance</div>
                 <div class="detail-content date-relevance" id="cardRelevance"></div>
+            </div>
+        </div>
+
+        <div class="card-details" id="threeCardDetails" style="display: none;">
+            <div class="detail-section">
+                <div class="detail-label">Past</div>
+                <div class="detail-content" id="pastMeaning"></div>
+                <div class="detail-content symbolism" id="pastSymbolism"></div>
+                <div class="detail-content date-relevance" id="pastRelevance"></div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-label">Present</div>
+                <div class="detail-content" id="presentMeaning"></div>
+                <div class="detail-content symbolism" id="presentSymbolism"></div>
+                <div class="detail-content date-relevance" id="presentRelevance"></div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-label">Future</div>
+                <div class="detail-content" id="futureMeaning"></div>
+                <div class="detail-content symbolism" id="futureSymbolism"></div>
+                <div class="detail-content date-relevance" id="futureRelevance"></div>
             </div>
         </div>
     </div>
@@ -806,26 +859,84 @@
         }
 
         function drawCard() {
-            const cardDisplay = document.getElementById('cardDisplay');
+            const spread = document.querySelector('input[name="spread"]:checked').value;
+            const singleContainer = document.querySelector('.single-container');
+            const threeRow = document.querySelector('.three-card-row');
             const cardDetails = document.getElementById('cardDetails');
-            
-            cardDisplay.classList.add('flipping');
-            
-            setTimeout(() => {
-                const randomIndex = Math.floor(Math.random() * tarotDeck.length);
-                const card = tarotDeck[randomIndex];
-                
-                document.querySelector('.card-image-container').textContent = card.icon;
-                document.querySelector('.card-name').textContent = card.name;
-                document.querySelector('.card-suit').textContent = card.suit;
-                
-                document.getElementById('cardMeaning').textContent = card.meaning;
-                document.getElementById('cardSymbolism').textContent = card.symbolism;
-                document.getElementById('cardRelevance').textContent = getDateRelevance(new Date());
-                
-                cardDetails.style.display = 'block';
-                cardDisplay.classList.remove('flipping');
-            }, 300);
+            const threeCardDetails = document.getElementById('threeCardDetails');
+
+            // reset displays
+            cardDetails.style.display = 'none';
+            threeCardDetails.style.display = 'none';
+
+            if (spread === 'single') {
+                threeRow.style.display = 'none';
+                singleContainer.style.display = 'block';
+
+                const cardDisplay = document.getElementById('cardDisplay');
+                cardDisplay.classList.add('flipping');
+
+                setTimeout(() => {
+                    const randomIndex = Math.floor(Math.random() * tarotDeck.length);
+                    const card = tarotDeck[randomIndex];
+
+                    const img = cardDisplay.querySelector('.card-image-container');
+                    img.textContent = card.icon;
+                    cardDisplay.querySelector('.card-name').textContent = card.name;
+                    cardDisplay.querySelector('.card-suit').textContent = card.suit;
+
+                    document.getElementById('cardMeaning').textContent = card.meaning;
+                    document.getElementById('cardSymbolism').textContent = card.symbolism;
+                    document.getElementById('cardRelevance').textContent = getDateRelevance(new Date());
+
+                    cardDetails.style.display = 'block';
+                    cardDisplay.classList.remove('flipping');
+                }, 300);
+            } else {
+                // three-card spread
+                singleContainer.style.display = 'none';
+                threeRow.style.display = 'flex';
+
+                // pick 3 unique random indices
+                const picks = [];
+                while (picks.length < 3) {
+                    const ri = Math.floor(Math.random() * tarotDeck.length);
+                    if (!picks.includes(ri)) picks.push(ri);
+                }
+
+                const ids = ['card1', 'card2', 'card3'];
+                ids.forEach(id => document.getElementById(id).classList.add('flipping'));
+
+                setTimeout(() => {
+                    ids.forEach((id, i) => {
+                        const c = tarotDeck[picks[i]];
+                        const el = document.getElementById(id);
+                        el.querySelector('.card-image-container').textContent = c.icon;
+                        el.querySelector('.card-name').textContent = c.name;
+                        el.querySelector('.card-suit').textContent = c.suit;
+                        el.classList.remove('flipping');
+                    });
+
+                    // Fill Past / Present / Future details
+                    const past = tarotDeck[picks[0]];
+                    const present = tarotDeck[picks[1]];
+                    const future = tarotDeck[picks[2]];
+
+                    document.getElementById('pastMeaning').textContent = past.meaning;
+                    document.getElementById('pastSymbolism').textContent = past.symbolism;
+                    document.getElementById('pastRelevance').textContent = getDateRelevance(new Date());
+
+                    document.getElementById('presentMeaning').textContent = present.meaning;
+                    document.getElementById('presentSymbolism').textContent = present.symbolism;
+                    document.getElementById('presentRelevance').textContent = getDateRelevance(new Date());
+
+                    document.getElementById('futureMeaning').textContent = future.meaning;
+                    document.getElementById('futureSymbolism').textContent = future.symbolism;
+                    document.getElementById('futureRelevance').textContent = getDateRelevance(new Date());
+
+                    threeCardDetails.style.display = 'block';
+                }, 350);
+            }
         }
 
         // Initialize on page load
